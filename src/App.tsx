@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Transfer from "./pages/Transfer";
 import QRScan from "./pages/QRScan";
 import Profile from "./pages/Profile";
+import EcoStore from "./pages/EcoStore";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/qrscan" element={<QRScan />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/ecostore" element={<EcoStore />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
