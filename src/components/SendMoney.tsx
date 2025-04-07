@@ -1,29 +1,37 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf, ShoppingCart, Gift } from 'lucide-react';
+import { Leaf, ShoppingCart, Gift, Trophy } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const SendMoney: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const actions = [
     { 
-      icon: <Leaf size={24} className="text-white" />, 
+      icon: <Leaf size={isMobile ? 20 : 24} className="text-white" />, 
       label: 'Reciclar',
       color: 'bg-eco-primary',
       action: () => navigate('/transfer')
     },
     { 
-      icon: <ShoppingCart size={24} className="text-white" />, 
+      icon: <ShoppingCart size={isMobile ? 20 : 24} className="text-white" />, 
       label: 'Tienda',
       color: 'bg-eco-secondary',
       action: () => navigate('/ecostore')
     },
     { 
-      icon: <Gift size={24} className="text-white" />, 
+      icon: <Gift size={isMobile ? 20 : 24} className="text-white" />, 
       label: 'Premios',
       color: 'bg-eco-accent',
       action: () => navigate('/rewards')
+    },
+    { 
+      icon: <Trophy size={isMobile ? 20 : 24} className="text-white" />, 
+      label: 'Logros',
+      color: 'bg-amber-500',
+      action: () => navigate('/achievements')
     }
   ];
 
@@ -36,10 +44,10 @@ const SendMoney: React.FC = () => {
             className="flex flex-col items-center cursor-pointer"
             onClick={action.action}
           >
-            <div className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center mb-2 hover:animate-pulse-scale`}>
+            <div className={`${isMobile ? 'w-12 h-12' : 'w-14 h-14'} rounded-full ${action.color} flex items-center justify-center mb-2 hover:animate-pulse-scale`}>
               {action.icon}
             </div>
-            <span className="text-sm">{action.label}</span>
+            <span className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{action.label}</span>
           </div>
         ))}
       </div>

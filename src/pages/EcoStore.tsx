@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Filter, Leaf } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Leaf, Star, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Navigation from '../components/Navigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Product type definition
 type Product = {
@@ -15,11 +16,14 @@ type Product = {
   price: number;
   image: string;
   category: string;
+  popular?: boolean;
+  level?: number;
 };
 
 const EcoStore: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const isMobile = useIsMobile();
 
   // Sample product data
   const products: Product[] = [
@@ -29,7 +33,8 @@ const EcoStore: React.FC = () => {
       description: "Bolsa reutilizable hecha de plástico reciclado",
       price: 50,
       image: "/placeholder.svg",
-      category: "productos"
+      category: "productos",
+      popular: true
     },
     {
       id: 2,
@@ -37,7 +42,8 @@ const EcoStore: React.FC = () => {
       description: "Botella de acero inoxidable, reduce tu uso de plástico",
       price: 120,
       image: "/placeholder.svg",
-      category: "productos"
+      category: "productos",
+      level: 2
     },
     {
       id: 3,
@@ -45,7 +51,8 @@ const EcoStore: React.FC = () => {
       description: "15% de descuento en tiendas afiliadas",
       price: 75,
       image: "/placeholder.svg",
-      category: "descuentos"
+      category: "descuentos",
+      popular: true
     },
     {
       id: 4,
@@ -61,7 +68,8 @@ const EcoStore: React.FC = () => {
       description: "Contribuye a plantar un árbol en zonas reforestadas",
       price: 150,
       image: "/placeholder.svg",
-      category: "servicios"
+      category: "servicios",
+      level: 3
     },
     {
       id: 6,
@@ -82,6 +90,9 @@ const EcoStore: React.FC = () => {
       )
       .filter(product => category === "todos" || product.category === category);
   };
+
+  // Get popular products
+  const popularProducts = products.filter(product => product.popular);
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
@@ -111,14 +122,67 @@ const EcoStore: React.FC = () => {
         </div>
       </div>
 
+      {/* Gamified Banner */}
+      {!searchQuery && (
+        <div className="px-4 mb-4">
+          <div className="eco-gradient rounded-xl p-4 text-white">
+            <div className="flex items-center">
+              <div className="mr-3">
+                <ShoppingBag size={24} className="text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm">¡Desbloquea productos exclusivos!</h3>
+                <p className="text-xs opacity-90">Recicla más botellas para subir de nivel</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popular Products (Only show if no search query) */}
+      {!searchQuery && (
+        <div className="px-4 mb-2">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-md font-semibold">Populares</h2>
+            <button className="text-eco-primary text-sm">Ver todos</button>
+          </div>
+          <div className="overflow-x-auto flex space-x-3 pb-2">
+            {popularProducts.map(product => (
+              <div key={product.id} className="min-w-[140px] max-w-[140px]">
+                <Card className="overflow-hidden">
+                  <div className="h-20 bg-gray-200 relative">
+                    <img 
+                      src={product.image} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-1 right-1 bg-eco-primary text-white text-xs px-1.5 py-0.5 rounded-full flex items-center">
+                      <Star size={10} className="mr-0.5" />
+                      <span>Popular</span>
+                    </div>
+                  </div>
+                  <CardContent className="p-2">
+                    <h3 className="font-semibold text-xs truncate">{product.name}</h3>
+                    <div className="flex items-center mt-1">
+                      <Leaf size={12} className="text-eco-primary mr-1" />
+                      <span className="font-bold text-xs">{product.price}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Categories Tabs */}
       <Tabs defaultValue="todos" className="w-full">
         <div className="px-4">
           <TabsList className="w-full bg-white rounded-lg">
-            <TabsTrigger value="todos" className="flex-1">Todos</TabsTrigger>
-            <TabsTrigger value="productos" className="flex-1">Productos</TabsTrigger>
-            <TabsTrigger value="servicios" className="flex-1">Servicios</TabsTrigger>
-            <TabsTrigger value="descuentos" className="flex-1">Descuentos</TabsTrigger>
+            <TabsTrigger value="todos" className="flex-1 text-xs">Todos</TabsTrigger>
+            <TabsTrigger value="productos" className="flex-1 text-xs">Productos</TabsTrigger>
+            <TabsTrigger value="servicios" className="flex-1 text-xs">Servicios</TabsTrigger>
+            <TabsTrigger value="descuentos" className="flex-1 text-xs">Descuentos</TabsTrigger>
           </TabsList>
         </div>
 
@@ -126,7 +190,7 @@ const EcoStore: React.FC = () => {
         <TabsContent value="todos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("todos").map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isMobile={isMobile} />
             ))}
           </div>
         </TabsContent>
@@ -135,7 +199,7 @@ const EcoStore: React.FC = () => {
         <TabsContent value="productos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("productos").map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isMobile={isMobile} />
             ))}
           </div>
         </TabsContent>
@@ -144,7 +208,7 @@ const EcoStore: React.FC = () => {
         <TabsContent value="servicios" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("servicios").map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isMobile={isMobile} />
             ))}
           </div>
         </TabsContent>
@@ -153,7 +217,7 @@ const EcoStore: React.FC = () => {
         <TabsContent value="descuentos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("descuentos").map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isMobile={isMobile} />
             ))}
           </div>
         </TabsContent>
@@ -165,26 +229,31 @@ const EcoStore: React.FC = () => {
 };
 
 // Product Card Component
-const ProductCard: React.FC<{product: Product}> = ({ product }) => {
+const ProductCard: React.FC<{product: Product, isMobile: boolean}> = ({ product, isMobile }) => {
   return (
     <Card className="overflow-hidden">
-      <div className="h-32 bg-gray-200">
+      <div className={`${isMobile ? 'h-28' : 'h-32'} bg-gray-200 relative`}>
         <img 
           src={product.image} 
           alt={product.name} 
           className="w-full h-full object-cover"
         />
+        {product.level && (
+          <div className="absolute top-1 right-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+            Nivel {product.level}+
+          </div>
+        )}
       </div>
-      <CardContent className="p-3">
+      <CardContent className={`${isMobile ? 'p-2' : 'p-3'}`}>
         <h3 className="font-semibold text-sm truncate">{product.name}</h3>
-        <p className="text-xs text-gray-500 h-8 overflow-hidden">{product.description}</p>
+        <p className={`text-xs text-gray-500 ${isMobile ? 'h-6' : 'h-8'} overflow-hidden`}>{product.description}</p>
       </CardContent>
-      <CardFooter className="flex justify-between items-center p-3 pt-0">
+      <CardFooter className={`flex justify-between items-center ${isMobile ? 'p-2 pt-0' : 'p-3 pt-0'}`}>
         <div className="flex items-center">
           <Leaf size={14} className="text-eco-primary mr-1" />
           <span className="font-bold text-sm">{product.price}</span>
         </div>
-        <Button size="sm" className="text-xs px-3 py-1 h-7">
+        <Button size="sm" className="text-xs px-2 py-1 h-7">
           Canjear
         </Button>
       </CardFooter>
