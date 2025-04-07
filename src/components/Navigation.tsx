@@ -40,7 +40,7 @@ const Navigation: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white flex justify-around py-2 border-t card-shadow">
+    <div className="fixed bottom-0 left-0 right-0 bg-white flex justify-around py-2 border-t card-shadow z-10">
       {navItems.map((item, index) => (
         <div 
           key={index}

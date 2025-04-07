@@ -25,7 +25,7 @@ const SendMoney: React.FC = () => {
       icon: <Gift size={isMobile ? 20 : 24} className="text-white" />, 
       label: 'Premios',
       color: 'bg-eco-accent',
-      action: () => navigate('/rewards')
+      action: () => navigate('/ecostore')
     },
     { 
       icon: <Trophy size={isMobile ? 20 : 24} className="text-white" />, 

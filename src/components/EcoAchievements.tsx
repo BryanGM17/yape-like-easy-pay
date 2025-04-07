@@ -58,7 +58,11 @@ const EcoAchievements: React.FC = () => {
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-4'}`}>
         {achievements.slice(0, isMobile ? 2 : 4).map((achievement) => (
-          <div key={achievement.id} className="bg-white rounded-xl p-3 card-shadow">
+          <div 
+            key={achievement.id} 
+            className="bg-white rounded-xl p-3 card-shadow cursor-pointer hover:bg-gray-50"
+            onClick={() => navigate('/achievements')}
+          >
             <div className="flex items-start">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
                 achievement.completed ? 'bg-eco-light' : 'bg-gray-100'

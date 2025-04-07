@@ -15,7 +15,7 @@ const ProfileOption: React.FC<{
     className="flex items-center p-4 border-b border-gray-100 cursor-pointer"
     onClick={onClick}
   >
-    <div className="mr-4 text-yape-primary">
+    <div className="mr-4 text-eco-primary">
       {icon}
     </div>
     <div className="flex-1">
@@ -33,31 +33,31 @@ const Profile: React.FC = () => {
       icon: <User size={24} />,
       title: "Información personal",
       description: "Edita tu perfil y datos personales",
-      onClick: () => {}
+      onClick: () => navigate('/personal-info')
     },
     {
       icon: <CreditCard size={24} />,
       title: "Métodos de pago",
       description: "Administra tus tarjetas y cuentas",
-      onClick: () => {}
+      onClick: () => navigate('/payment-methods')
     },
     {
       icon: <Shield size={24} />,
       title: "Seguridad",
       description: "Configura opciones de seguridad",
-      onClick: () => {}
+      onClick: () => navigate('/security')
     },
     {
       icon: <Settings size={24} />,
       title: "Configuración",
       description: "Personaliza tu experiencia",
-      onClick: () => {}
+      onClick: () => navigate('/settings')
     },
     {
       icon: <HelpCircle size={24} />,
       title: "Ayuda",
       description: "Consultas y soporte técnico",
-      onClick: () => {}
+      onClick: () => navigate('/help')
     }
   ];
 
@@ -76,8 +76,8 @@ const Profile: React.FC = () => {
       </div>
 
       <div className="p-6 flex flex-col items-center bg-white mb-4">
-        <div className="w-20 h-20 rounded-full bg-yape-light flex items-center justify-center mb-3">
-          <User size={36} className="text-yape-primary" />
+        <div className="w-20 h-20 rounded-full bg-eco-light flex items-center justify-center mb-3">
+          <User size={36} className="text-eco-primary" />
         </div>
         <h2 className="text-xl font-bold">Camila Rodriguez</h2>
         <p className="text-gray-500">+51 987 654 321</p>
@@ -99,6 +99,7 @@ const Profile: React.FC = () => {
         <Button 
           variant="outline"
           className="w-full py-6 text-red-500 font-semibold rounded-xl border-red-200 flex items-center justify-center"
+          onClick={() => navigate('/')}
         >
           <LogOut className="mr-2" size={18} />
           Cerrar sesión
