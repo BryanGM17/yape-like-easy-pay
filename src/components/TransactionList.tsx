@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { Leaf, ShoppingCart } from 'lucide-react';
 
 type Transaction = {
   id: number;
@@ -9,40 +9,45 @@ type Transaction = {
   name: string;
   date: string;
   time: string;
+  description: string;
 };
 
 const transactions: Transaction[] = [
   {
     id: 1,
     type: 'in',
-    amount: '150.00',
-    name: 'Roberto Sánchez',
+    amount: '10',
+    name: 'EcoBox Centro Lima',
     date: '07 Abr',
-    time: '14:30'
+    time: '14:30',
+    description: 'Reciclaje de 10 botellas'
   },
   {
     id: 2,
     type: 'out',
-    amount: '75.50',
-    name: 'Café Mirasol',
+    amount: '15',
+    name: 'EcoStore',
     date: '06 Abr',
-    time: '10:15'
+    time: '10:15',
+    description: 'Compra de bolsa ecológica'
   },
   {
     id: 3,
     type: 'in',
-    amount: '500.00',
-    name: 'María García',
+    amount: '5',
+    name: 'EcoBox Miraflores',
     date: '05 Abr',
-    time: '16:45'
+    time: '16:45',
+    description: 'Reciclaje de 5 botellas'
   },
   {
     id: 4,
     type: 'out',
-    amount: '125.00',
-    name: 'Supermercado El Sol',
+    amount: '20',
+    name: 'Descuento Café Verde',
     date: '02 Abr',
-    time: '11:20'
+    time: '11:20',
+    description: 'Canje por descuento'
   }
 ];
 
@@ -50,7 +55,7 @@ const TransactionList: React.FC = () => {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold">Movimientos recientes</h2>
+        <h2 className="text-lg font-semibold">Actividad reciente</h2>
       </div>
       <div className="bg-white rounded-xl overflow-hidden card-shadow">
         {transactions.map((transaction) => (
@@ -58,24 +63,25 @@ const TransactionList: React.FC = () => {
             <div className="flex items-center">
               <div 
                 className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                  transaction.type === 'in' ? 'bg-green-100' : 'bg-red-100'
+                  transaction.type === 'in' ? 'bg-green-100' : 'bg-amber-100'
                 }`}
               >
                 {transaction.type === 'in' ? (
-                  <ArrowDown size={20} className="text-green-600" />
+                  <Leaf size={20} className="text-eco-primary" />
                 ) : (
-                  <ArrowUp size={20} className="text-red-600" />
+                  <ShoppingCart size={20} className="text-amber-600" />
                 )}
               </div>
               <div>
                 <p className="font-medium">{transaction.name}</p>
-                <p className="text-xs text-gray-500">{transaction.date} • {transaction.time}</p>
+                <p className="text-xs text-gray-500">{transaction.description}</p>
+                <p className="text-xs text-gray-400">{transaction.date} • {transaction.time}</p>
               </div>
             </div>
             <div className={`font-bold ${
-              transaction.type === 'in' ? 'text-green-600' : 'text-red-600'
+              transaction.type === 'in' ? 'text-eco-primary' : 'text-amber-600'
             }`}>
-              {transaction.type === 'in' ? '+' : '-'} S/ {transaction.amount}
+              {transaction.type === 'in' ? '+' : '-'} {transaction.amount} <span className="text-xs">EP</span>
             </div>
           </div>
         ))}

@@ -1,29 +1,29 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send, Users, CreditCard } from 'lucide-react';
+import { Leaf, ShoppingCart, Gift } from 'lucide-react';
 
 const SendMoney: React.FC = () => {
   const navigate = useNavigate();
 
   const actions = [
     { 
-      icon: <Send size={24} className="text-white" />, 
-      label: 'Transferir',
-      color: 'bg-yape-primary',
+      icon: <Leaf size={24} className="text-white" />, 
+      label: 'Reciclar',
+      color: 'bg-eco-primary',
       action: () => navigate('/transfer')
     },
     { 
-      icon: <Users size={24} className="text-white" />, 
-      label: 'Contactos',
-      color: 'bg-yape-secondary',
-      action: () => {}
+      icon: <ShoppingCart size={24} className="text-white" />, 
+      label: 'Tienda',
+      color: 'bg-eco-secondary',
+      action: () => navigate('/ecostore')
     },
     { 
-      icon: <CreditCard size={24} className="text-white" />, 
-      label: 'Tarjetas',
-      color: 'bg-yape-accent',
-      action: () => {}
+      icon: <Gift size={24} className="text-white" />, 
+      label: 'Premios',
+      color: 'bg-eco-accent',
+      action: () => navigate('/rewards')
     }
   ];
 

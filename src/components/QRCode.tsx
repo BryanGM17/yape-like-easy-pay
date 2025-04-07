@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QrCode, Leaf } from 'lucide-react';
 
 const QRCode: React.FC = () => {
   const navigate = useNavigate();
@@ -11,27 +12,15 @@ const QRCode: React.FC = () => {
       onClick={() => navigate('/qrscan')}
     >
       <div className="bg-white p-5 rounded-xl w-full flex flex-col items-center card-shadow">
-        <div className="yape-gradient p-3 rounded-xl mb-3">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="50" 
-            height="50" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="white"
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <rect x="7" y="7" width="3" height="3"/>
-            <rect x="14" y="7" width="3" height="3"/>
-            <rect x="7" y="14" width="3" height="3"/>
-            <rect x="14" y="14" width="3" height="3"/>
-          </svg>
+        <div className="eco-gradient p-3 rounded-xl mb-3 flex items-center justify-center">
+          <QrCode size={50} className="text-white" />
         </div>
-        <span className="font-semibold text-center">Escanea un código QR</span>
-        <span className="text-sm text-gray-500 text-center">Paga fácilmente con QR</span>
+        <span className="font-semibold text-center">Escanear EcoBox</span>
+        <span className="text-sm text-gray-500 text-center">Gana EcoPoints reciclando botellas</span>
+        <div className="mt-3 flex items-center justify-center bg-eco-light px-4 py-2 rounded-full">
+          <Leaf size={18} className="text-eco-primary mr-2" />
+          <span className="text-eco-primary">1 botella = 1 EcoPoint</span>
+        </div>
       </div>
     </div>
   );

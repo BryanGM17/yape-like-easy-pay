@@ -53,12 +53,12 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				yape: {
-					primary: '#8B5CF6',
-					secondary: '#D946EF',
-					accent: '#F97316',
-					light: '#E5DEFF',
-					dark: '#1A1F2C',
+				eco: {
+					primary: '#2E7D32',     // Dark green
+					secondary: '#4CAF50',   // Medium green
+					accent: '#81C784',      // Light green
+					light: '#E8F5E9',       // Very light green
+					dark: '#1A1F2C',        // Dark for contrast
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
