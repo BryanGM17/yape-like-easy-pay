@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Balance from '../components/Balance';
 import SendMoney from '../components/SendMoney';
@@ -7,10 +7,20 @@ import QRCode from '../components/QRCode';
 import TransactionList from '../components/TransactionList';
 import Navigation from '../components/Navigation';
 import EcoAchievements from '../components/EcoAchievements';
+import RecyclingProgress from '../components/RecyclingProgress';
 import { useIsMobile } from '../hooks/use-mobile';
 
 const Index: React.FC = () => {
   const isMobile = useIsMobile();
+  const [userPoints, setUserPoints] = useState(200);
+  
+  // Load saved points from localStorage
+  useEffect(() => {
+    const savedPoints = localStorage.getItem('userPoints');
+    if (savedPoints) {
+      setUserPoints(parseInt(savedPoints));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen pb-20">
@@ -42,6 +52,7 @@ const Index: React.FC = () => {
           </div>
         </div>
         <SendMoney />
+        <RecyclingProgress />
         <EcoAchievements />
         <QRCode />
         <TransactionList />

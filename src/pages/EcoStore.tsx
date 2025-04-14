@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Filter, Leaf, Star, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Leaf, Star, ShoppingBag, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { toast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 import Navigation from '../components/Navigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -20,19 +22,31 @@ type Product = {
   level?: number;
 };
 
+// Purchase type
+type Purchase = {
+  id: number;
+  productId: number;
+  productName: string;
+  price: number;
+  date: Date;
+};
+
 const EcoStore: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [userPoints, setUserPoints] = useState(200); // Starting with 200 points
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [showSuccess, setShowSuccess] = useState<number | null>(null);
   const isMobile = useIsMobile();
 
-  // Sample product data
+  // Sample product data with actual images
   const products: Product[] = [
     {
       id: 1,
       name: "Bolsa Ecológica",
       description: "Bolsa reutilizable hecha de plástico reciclado",
       price: 50,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1597348989645-46b190ce4918?q=80&w=300",
       category: "productos",
       popular: true
     },
@@ -41,7 +55,7 @@ const EcoStore: React.FC = () => {
       name: "Botella Reutilizable",
       description: "Botella de acero inoxidable, reduce tu uso de plástico",
       price: 120,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=300",
       category: "productos",
       level: 2
     },
@@ -50,7 +64,7 @@ const EcoStore: React.FC = () => {
       name: "Descuento SuperEco",
       description: "15% de descuento en tiendas afiliadas",
       price: 75,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1612103198005-b733c090de1e?q=80&w=300",
       category: "descuentos",
       popular: true
     },
@@ -59,7 +73,7 @@ const EcoStore: React.FC = () => {
       name: "Entrada Museo Ecológico",
       description: "Entrada gratuita al museo ecológico de la ciudad",
       price: 100,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=300",
       category: "servicios"
     },
     {
@@ -67,7 +81,7 @@ const EcoStore: React.FC = () => {
       name: "Planta un Árbol",
       description: "Contribuye a plantar un árbol en zonas reforestadas",
       price: 150,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=300",
       category: "servicios",
       level: 3
     },
@@ -76,10 +90,115 @@ const EcoStore: React.FC = () => {
       name: "Descuento EcoRestaurante",
       description: "10% de descuento en restaurantes eco-friendly",
       price: 65,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=300",
       category: "descuentos"
+    },
+    {
+      id: 7,
+      name: "Kit de Compostaje",
+      description: "Comienza a hacer compost en casa con este kit completo",
+      price: 90,
+      image: "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?q=80&w=300",
+      category: "productos"
+    },
+    {
+      id: 8,
+      name: "Curso de Reciclaje",
+      description: "Aprende técnicas avanzadas de reciclaje y reutilización",
+      price: 130,
+      image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=300",
+      category: "servicios",
+      level: 2
+    },
+    {
+      id: 9,
+      name: "Descuento Transporte Verde",
+      description: "25% de descuento en alquiler de bicicletas y scooters",
+      price: 85,
+      image: "https://images.unsplash.com/photo-1519583272095-6433daf26b6e?q=80&w=300",
+      category: "descuentos",
+      popular: true
+    },
+    {
+      id: 10,
+      name: "Set de Cubiertos",
+      description: "Cubiertos reutilizables de bambú para llevar contigo",
+      price: 70,
+      image: "https://images.unsplash.com/photo-1546549032-9571cd6b27df?q=80&w=300",
+      category: "productos"
     }
   ];
+
+  // Load saved data from localStorage
+  useEffect(() => {
+    const savedPoints = localStorage.getItem('userPoints');
+    if (savedPoints) {
+      setUserPoints(parseInt(savedPoints));
+    }
+    
+    const savedPurchases = localStorage.getItem('purchases');
+    if (savedPurchases) {
+      setPurchases(JSON.parse(savedPurchases));
+    }
+  }, []);
+
+  // Save data to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('userPoints', userPoints.toString());
+    localStorage.setItem('purchases', JSON.stringify(purchases));
+  }, [userPoints, purchases]);
+
+  // Function to handle product purchase
+  const handlePurchase = (product: Product) => {
+    if (userPoints < product.price) {
+      toast({
+        title: "Puntos insuficientes",
+        description: `Necesitas ${product.price - userPoints} puntos más para canjear este producto.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // If user has a level requirement
+    if (product.level && product.level > getCurrentUserLevel()) {
+      toast({
+        title: "Nivel insuficiente",
+        description: `Necesitas estar en el nivel ${product.level} para canjear este producto.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Process the purchase
+    const newPurchase: Purchase = {
+      id: Date.now(),
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      date: new Date()
+    };
+
+    setPurchases(prev => [newPurchase, ...prev]);
+    setUserPoints(prev => prev - product.price);
+    
+    // Show success feedback
+    setShowSuccess(product.id);
+    setTimeout(() => setShowSuccess(null), 2000);
+
+    toast({
+      title: "¡Compra exitosa!",
+      description: `Has canjeado ${product.name} por ${product.price} puntos.`,
+    });
+  };
+
+  // Function to get current user level based on points
+  const getCurrentUserLevel = () => {
+    if (userPoints >= 400) return 4;
+    if (userPoints >= 300) return 3;
+    if (userPoints >= 200) return 2;
+    if (userPoints >= 100) return 1;
+    return 0;
+  };
 
   // Filter products based on search and selected category
   const filteredProducts = (category: string) => {
@@ -108,6 +227,17 @@ const EcoStore: React.FC = () => {
         <div className="w-6"></div>
       </div>
 
+      {/* Points Display */}
+      <div className="px-4 py-2 bg-white shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Leaf size={18} className="text-eco-primary mr-2" />
+            <span className="font-bold">Tus puntos:</span>
+          </div>
+          <span className="font-bold text-lg text-eco-primary">{userPoints}</span>
+        </div>
+      </div>
+
       {/* Search Bar */}
       <div className="p-4">
         <div className="relative">
@@ -133,6 +263,14 @@ const EcoStore: React.FC = () => {
               <div>
                 <h3 className="font-bold text-sm">¡Desbloquea productos exclusivos!</h3>
                 <p className="text-xs opacity-90">Recicla más botellas para subir de nivel</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2 bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  onClick={() => navigate('/achievements')}
+                >
+                  Ver mi progreso
+                </Button>
               </div>
             </div>
           </div>
@@ -190,7 +328,15 @@ const EcoStore: React.FC = () => {
         <TabsContent value="todos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("todos").map(product => (
-              <ProductCard key={product.id} product={product} isMobile={isMobile} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isMobile={isMobile}
+                onPurchase={handlePurchase}
+                showSuccess={showSuccess === product.id}
+                userPoints={userPoints}
+                userLevel={getCurrentUserLevel()}
+              />
             ))}
           </div>
         </TabsContent>
@@ -199,7 +345,15 @@ const EcoStore: React.FC = () => {
         <TabsContent value="productos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("productos").map(product => (
-              <ProductCard key={product.id} product={product} isMobile={isMobile} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isMobile={isMobile}
+                onPurchase={handlePurchase}
+                showSuccess={showSuccess === product.id}
+                userPoints={userPoints}
+                userLevel={getCurrentUserLevel()}
+              />
             ))}
           </div>
         </TabsContent>
@@ -208,7 +362,15 @@ const EcoStore: React.FC = () => {
         <TabsContent value="servicios" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("servicios").map(product => (
-              <ProductCard key={product.id} product={product} isMobile={isMobile} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isMobile={isMobile}
+                onPurchase={handlePurchase}
+                showSuccess={showSuccess === product.id}
+                userPoints={userPoints} 
+                userLevel={getCurrentUserLevel()}
+              />
             ))}
           </div>
         </TabsContent>
@@ -217,11 +379,48 @@ const EcoStore: React.FC = () => {
         <TabsContent value="descuentos" className="px-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             {filteredProducts("descuentos").map(product => (
-              <ProductCard key={product.id} product={product} isMobile={isMobile} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isMobile={isMobile}
+                onPurchase={handlePurchase}
+                showSuccess={showSuccess === product.id}
+                userPoints={userPoints}
+                userLevel={getCurrentUserLevel()}
+              />
             ))}
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Recent Purchases */}
+      {purchases.length > 0 && (
+        <div className="px-4 py-6">
+          <h2 className="text-md font-semibold mb-3">Tus compras recientes</h2>
+          <div className="bg-white rounded-xl overflow-hidden card-shadow">
+            {purchases.slice(0, 3).map((purchase) => (
+              <div key={purchase.id} className="flex justify-between items-center p-3 border-b border-gray-100 last:border-0">
+                <div>
+                  <p className="font-medium text-sm">{purchase.productName}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(purchase.date).toLocaleDateString('es-ES', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+                <div className="flex items-center text-amber-600">
+                  <Leaf size={14} className="mr-1" />
+                  <span className="font-bold">{purchase.price}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Navigation />
     </div>
@@ -229,7 +428,17 @@ const EcoStore: React.FC = () => {
 };
 
 // Product Card Component
-const ProductCard: React.FC<{product: Product, isMobile: boolean}> = ({ product, isMobile }) => {
+const ProductCard: React.FC<{
+  product: Product, 
+  isMobile: boolean,
+  onPurchase: (product: Product) => void,
+  showSuccess: boolean,
+  userPoints: number,
+  userLevel: number
+}> = ({ product, isMobile, onPurchase, showSuccess, userPoints, userLevel }) => {
+  const canPurchase = userPoints >= product.price && 
+                      (!product.level || userLevel >= product.level);
+  
   return (
     <Card className="overflow-hidden">
       <div className={`${isMobile ? 'h-28' : 'h-32'} bg-gray-200 relative`}>
@@ -239,8 +448,15 @@ const ProductCard: React.FC<{product: Product, isMobile: boolean}> = ({ product,
           className="w-full h-full object-cover"
         />
         {product.level && (
-          <div className="absolute top-1 right-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+          <Badge className="absolute top-1 right-1 bg-amber-500 border-none">
             Nivel {product.level}+
+          </Badge>
+        )}
+        {showSuccess && (
+          <div className="absolute inset-0 bg-eco-primary/80 flex items-center justify-center">
+            <div className="bg-white rounded-full p-1">
+              <Check className="text-eco-primary" size={24} />
+            </div>
           </div>
         )}
       </div>
@@ -253,8 +469,13 @@ const ProductCard: React.FC<{product: Product, isMobile: boolean}> = ({ product,
           <Leaf size={14} className="text-eco-primary mr-1" />
           <span className="font-bold text-sm">{product.price}</span>
         </div>
-        <Button size="sm" className="text-xs px-2 py-1 h-7">
-          Canjear
+        <Button 
+          size="sm" 
+          className={`text-xs px-2 py-1 h-7 ${canPurchase ? '' : 'opacity-50'}`}
+          onClick={() => onPurchase(product)}
+          disabled={!canPurchase}
+        >
+          {userPoints < product.price ? "Insuficiente" : "Canjear"}
         </Button>
       </CardFooter>
     </Card>
