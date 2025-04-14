@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Lock, FingerPrint, Eye, EyeOff, Key, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Lock, Fingerprint, Eye, EyeOff, Key, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navigation from '../components/Navigation';
 
@@ -90,7 +90,7 @@ const SecuritySettings: React.FC = () => {
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <FingerPrint size={20} className="text-eco-primary mr-2" />
+                <Fingerprint size={20} className="text-eco-primary mr-2" />
                 <div>
                   <p className="text-sm">Autenticación biométrica</p>
                   <p className="text-xs text-gray-500">Usa tu huella digital para acceder</p>
