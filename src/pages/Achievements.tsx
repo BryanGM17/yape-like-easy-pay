@@ -28,7 +28,7 @@ const Achievements: React.FC = () => {
     if (userPoints >= 300) return 3;
     if (userPoints >= 200) return 2;
     if (userPoints >= 100) return 1;
-    return 1;
+    return 0;
   };
 
   const achievements = [
