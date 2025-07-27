@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
         <div className="w-20 h-20 rounded-full bg-eco-light flex items-center justify-center mb-3">
           <User size={36} className="text-eco-primary" />
         </div>
-        <h2 className="text-xl font-bold">Camila Rodriguez</h2>
+        <h2 className="text-xl font-bold">Diego Vazquez</h2>
         <p className="text-gray-500">+51 987 654 321</p>
       </div>
 
